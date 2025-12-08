@@ -23,17 +23,17 @@ jobs:
 
       # backend
       - name: Build backend image
-        run: docker build -t ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:backend ./backend
+        run: docker build -t ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_REPO }}:backend ./backend
 
       - name: Push backend image
-        run: docker push ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:backend
+        run: docker push ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_REPO }}:backend
 
       # frontend
       - name: Build frontend image
-        run: docker build -t ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:frontend ./frontend
+        run: docker build -t ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_REPO }}:frontend ./frontend
 
       - name: Push frontend image
-        run: docker push ${{ env.DOCKER_USER }}/${{ env.DOCKER_REPO }}:frontend
+        run: docker push ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_REPO }}:frontend
 
   deploy-backend:
     runs-on: ubuntu-latest
