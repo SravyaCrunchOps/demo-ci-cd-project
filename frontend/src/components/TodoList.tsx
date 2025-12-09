@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import type { Todo } from '../types/todo'
 
-const BASE_API = import.meta.env.BACKEND_URL || '/api'
+const BASE_API = import.meta.env.VITE_BACKEND_URL || '/api'
 
 export const TodoList = () => {
     const [title, setTitle] = useState('')
