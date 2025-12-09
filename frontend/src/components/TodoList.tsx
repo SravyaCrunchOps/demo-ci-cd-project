@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import type { Todo } from '../types/todo'
 
+const BASE_API = import.meta.env.BACKEND_URL || '/api'
+
 export const TodoList = () => {
     const [title, setTitle] = useState('')
     const [todos, setTodos] = useState<Todo[]>([])
@@ -8,7 +10,7 @@ export const TodoList = () => {
 
     async function load() {
         setLoading(true)
-        const res = await fetch('/api/todos')
+        const res = await fetch(`${BASE_API}/todos`)
         const data = await res.json()
         setTodos(data)
         setLoading(false)
@@ -26,7 +28,7 @@ export const TodoList = () => {
             console.log('no title')
             return
         }      
-        const res = await fetch('/api/todos', {
+        const res = await fetch(`${BASE_API}/todos`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ title })
@@ -38,7 +40,7 @@ export const TodoList = () => {
     }
 
     const toggle = async(id: string) => {
-        const res = await fetch(`/api/todos/${id}/toggle`, {
+        const res = await fetch(`${BASE_API}/todos/${id}/toggle`, {
             method: 'PATCH',
         })
         if(res.ok) {
@@ -47,7 +49,7 @@ export const TodoList = () => {
     }
 
     const remove = async(id: string) => {
-        const res = await fetch(`/api/todos/${id}/delete`, {method: 'DELETE'})
+        const res = await fetch(`${BASE_API}/todos/${id}/delete`, {method: 'DELETE'})
         if(res.ok) {
             load()
         }
