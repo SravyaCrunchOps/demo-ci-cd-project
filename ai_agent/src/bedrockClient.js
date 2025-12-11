@@ -18,7 +18,7 @@ export async function invokeBedrockLLM(intent) {
         modelId: model,
         contentType: 'application/json',
         accept: 'application/json',
-        body: JSON.stringify(intent)
+        inputText: intent
     })
 
     console.log('command sent: ', command)
