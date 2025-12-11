@@ -7,8 +7,8 @@ export const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
 // create new branch
 
-export async function createBranch(repo, baseBranch, newBranch) {
-    const [owner, repo] = repo.split('/')
+export async function createBranch(repoFullName, baseBranch, newBranch) {
+    const [owner, repo] = repoFullName.split('/')
     const {data: baseRef} = await octokit.rest.repos.getBranch({ 
         owner,
         repo,
@@ -26,8 +26,8 @@ export async function createBranch(repo, baseBranch, newBranch) {
     return newBranch
 }
 
-export async function commitFile(repo, branch, path, content, commitMessage) {
-    const [owner, repo] = repo.split('/')
+export async function commitFile(repoFullName, branch, path, content, commitMessage) {
+    const [owner, repo] = repoFullName.split('/')
     // get file; if exists update, else create
     try{ 
         const get = await octokit.rest.repos.getContent({
@@ -59,8 +59,8 @@ export async function commitFile(repo, branch, path, content, commitMessage) {
     }
 }
 
-export async function createPullRequest(repo, baseBranch, newBranch, title, body) {
-    const [owner, repo] = repo.split('/')
+export async function createPullRequest(repoFullName, baseBranch, newBranch, title, body) {
+    const [owner, repo] = repoFullName.split('/')
     const {data: pr } = await octokit.rest.pulls.create({
         owner,
         repo,
@@ -73,8 +73,8 @@ export async function createPullRequest(repo, baseBranch, newBranch, title, body
     return pr
 }
 
-export async function listOpenPRs(repo, headBranch) {
-    const [owner, repo] = repo.split('/')
+export async function listOpenPRs(repoFullName, headBranch) {
+    const [owner, repo] = repoFullName.split('/')
     const { data } = await octokit.rest.pulls.list({
         owner,
         repo,
@@ -84,8 +84,8 @@ export async function listOpenPRs(repo, headBranch) {
     return data
 }
 
-export async function mergePR(repo, prNumber) {
-    const [owner, repo] = repo.split('/')
+export async function mergePR(repoFullName, prNumber) {
+    const [owner, repo] = repoFullName.split('/')
     const { data } = await octokit.rest.pulls.merge({
         owner,
         repo,

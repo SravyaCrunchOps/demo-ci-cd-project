@@ -5,8 +5,14 @@ import request from 'supertest'
 import todosRouter from '../src/routes/todo.route.js'
 import Todo from '../src/models/Todo.js'
 
+
 Todo.find = () => ({
     sort: () => Promise.resolve([])
+})
+
+test("force fail", () => {
+    let x = 
+    expect(1).toBe(2)
 })
 
 test('todos router: list items (mocked)', async() => {

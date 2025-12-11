@@ -1,9 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import { verifySignature } from './helper'
-import { createBranch, commitFile, createPullRequest, listOpenPRs, mergePR } from './githubTools'
-import { invokeBedrockLLM } from './bedrockClient'
+import { verifySignature } from './helper.js'
+import { createBranch, commitFile, createPullRequest, listOpenPRs, mergePR } from './githubTools.js'
+import { invokeBedrockLLM } from './bedrockClient.js'
 
 
 dotenv.config()
