@@ -5,7 +5,7 @@ export const verifySignature = async (req, webhook_secret) => {
         console.log('!!! No webhook secret provided')
         return false
     }
-    const signature = req.headers['X-Hub-Signature-256']
+    const signature = req.headers['x-hub-signature-256']
     console.log('headers: ', req.headers)
     if(!signature) {
         console.log('!!! No signature provided: ', signature)
