@@ -81,7 +81,7 @@ jobs:
     steps:
       - name: Send webhook payload to AI Agent
         run: |
-          curl -X POST "${{ secrets.AI_AGENT_URL }}/webhook" 
+          curl -X POST "${{ secrets.AI_AGENT_URL }}/webhook" \
               -H "Content-Type: application/json" \
               -d '{
                 "repository": "${{ github.repository }}",
