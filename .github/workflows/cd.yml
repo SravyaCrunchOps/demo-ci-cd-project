@@ -61,5 +61,5 @@ jobs:
     needs: docker-build-push
     steps:
       - name: Deploy AI Agent Service
-        run: curl -X POST ${{ secrets.RENDER_AI_AGENT_HOOK }}
+        run: curl -X POST ${{ secrets.AI_AGENT_URL }}
     
