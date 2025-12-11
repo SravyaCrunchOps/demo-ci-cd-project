@@ -35,15 +35,31 @@ jobs:
       - name: Push frontend image
         run: docker push ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_REPO }}:frontend
 
+      # ai-agent service
+      - name: Build AI Agent image
+        run: docker build -t ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_REPO }}:ai-agent ./ai_agent
+
+      - name: Push ai-agent image
+        run: docker push ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_REPO }}:ai-agent
+
   deploy-backend:
     runs-on: ubuntu-latest
+    needs: docker-build-push
     steps:
       - name: Deploy Backend to Render
         run: curl -X POST ${{ secrets.RENDER_BACKEND_HOOK }}
 
   deploy-frontend:
     runs-on: ubuntu-latest
+    needs: docker-build-push
     steps:
       - name: Deploy Frontend to Render
         run: curl -X POST ${{ secrets.RENDER_FRONTEND_HOOK }}
+
+  deploy-ai-agent:
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    steps:
+      - name: Deploy AI Agent Service
+        run: curl -X POST ${{ secrets.RENDER_AI_AGENT_HOOK }}
     

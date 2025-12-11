@@ -13,8 +13,22 @@ A minimal MERN stack (MongoDB, Express, React, Node.js) with CI/CD on GitHub Act
 demo-ci-cd-project
 |__ .github
    |__ workflows/
+      |__ ci./yml
+      |__ cd/yml
+|__ ai_agent/
+   |__ src/
+   |__ package*.json
+   |__ Dockerfile
 |__ backend/
-|__ frotned/
+   |__ src/
+      |__ package*.json
+      |__ Dockerfile
+|__ frontend/
+   |__ src/
+      |__ package*.json
+      |__ Dockerfile
+|__ README.md
+|__ docker-compose.yml
 
 ## Backend
 1. Copy `.env.example` to `.env` and set MONGO_URI and PORT.
