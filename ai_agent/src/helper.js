@@ -6,6 +6,7 @@ export const verifySignature = async (req, webhook_secret) => {
         return false
     }
     const signature = req.headers['X-Hub-Signature-256']
+    console.log('headers: ', req.headers)
     if(!signature) {
         console.log('!!! No signature provided: ', signature)
         return false
@@ -14,7 +15,7 @@ export const verifySignature = async (req, webhook_secret) => {
     const payload = JSON.stringify(req.body)
     hmac.update(payload)
 
-    const digest = `sha-256=${hmac.digest("hex")}`
+    const digest = `sha256=${hmac.digest("hex")}`
 
     const safe_signature = crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature))
     console.log('safe-signature: ', safe_signature)
