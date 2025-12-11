@@ -21,8 +21,10 @@ app.post('/webhook', async (req, res) => {
       return res.status(401).send('Invalid signature')
     }
 
-    const event = req.headers['X-GitHub-Event']
+    const event = req.headers['x-github-event']
+    console.log('event: ', event)
     const payload = req.body
+    console.log('payload: ', payload)
 
     //  configure your workflow_run: to get details of that workflow
     if(event === "workflow_run" && payload.action === "completed") {
