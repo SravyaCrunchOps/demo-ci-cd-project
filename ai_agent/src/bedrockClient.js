@@ -17,10 +17,8 @@ export async function invokeBedrockLLM(intent) {
     console.log('mode-id: ', model)
     const command = new ConverseCommand({
         modelId: model,
-        contentType: 'application/json',
-        accept: 'application/json',
         messages: [{role: 'user', content: [{text: intent}]}],
-        system: 'You are a helpful assistant that helps software developers fix their CI/CD pipeline issues.',
+        system: [{type: 'text', text: 'You are a helpful assistant that helps software developers fix their CI/CD pipeline issues.'}],
         inferenceConfig: {
             maxTokens: 1000,
             temperature: 0.7
