@@ -79,7 +79,9 @@ app.post('/webhook', async (req, res) => {
         const modelResponse = await invokeBedrockLLM(intent)
         console.log('modelResponse: ', modelResponse)
 
-        if(!modelResponse || !Array.isArray(modelResponse.patches)) {
+        const parsedResponse = JSON.parse(modelResponse)
+
+        if(!parsedResponse || !Array.isArray(parsedResponse.patches)) {
           console.log("Model suggested no patches; stopping.");
           return res.status(200).json({ message: "No patches suggested" });
         }
@@ -90,7 +92,7 @@ app.post('/webhook', async (req, res) => {
 
         await createBranch(repo, baseBranch, newBranch) 
         
-        for (const p of modelResponse.patches) {
+        for (const p of parsedResponse.patches) {
           const path = p.file_path
           const content = p.new_content
           const commitMsg = p.commit_message || `agent-fixed: ${path}`
@@ -98,8 +100,8 @@ app.post('/webhook', async (req, res) => {
         }
 
         // create PR
-        const prTitle = modelResponse.pr_title || `Agent-fix: CI is fixed for ${headSha.slice(0, 7)}`
-        const prBody = modelResponse.pr_body || `Autmated PR created by Agent to address failing CI ppieline`
+        const prTitle = parsedResponse.pr_title || `Agent-fix: CI is fixed for ${headSha.slice(0, 7)}`
+        const prBody = parsedResponse.pr_body || `Autmated PR created by Agent to address failing CI ppieline`
         const pr = await createPullRequest(repo, baseBranch, newBranch, prTitle, prBody)
 
         console.log('created PR: ', pr.html_url)
