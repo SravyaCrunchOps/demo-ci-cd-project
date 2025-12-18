@@ -1,0 +1,2 @@
+// Add or ensure the following dependency is present
+  "jest": ^29.4.3
