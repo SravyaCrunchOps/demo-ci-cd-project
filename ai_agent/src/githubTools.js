@@ -5,8 +5,39 @@ dotenv.config()
 
 export const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
-// create new branch
 
+// fetch all jobs
+export async function fetchJobs(repoFullName, runId) {
+    const [owner, repo] = repoFullName.split('/')
+    const jobs = await octokit.rest.actions.listJobsForWorkflowRun({
+        owner,
+        repo,
+        run_id: runId,
+    })
+    return jobs.data.jobs
+}
+
+// request logs for a job
+export async function requestLogs(repoFullName, jobId) {
+    const [owner, repo] = repoFullName.split('/')
+    // output is zip file which i have to unzip to extract logs
+    // const logs = await octokit.rest.actions.downloadJobLogsForWorkflowRun({
+    //     owner,
+    //     repo,
+    //     job_id: jobId,
+    // }) 
+    const logs = await octokit.request('GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs', {
+        owner,
+        repo,
+        job_id: jobId,
+    })
+    console.log('logs data: ', logs)
+    return logs.data
+}
+
+
+
+// create new branch
 export async function createBranch(repoFullName, baseBranch, newBranch) {
     const [owner, repo] = repoFullName.split('/')
     const {data: baseRef} = await octokit.rest.repos.getBranch({ 

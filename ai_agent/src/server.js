@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { verifySignature } from './helper.js'
-import { createBranch, commitFile, createPullRequest, listOpenPRs, mergePR } from './githubTools.js'
+import { fetchJobs, requestLogs, createBranch, commitFile, createPullRequest, listOpenPRs, mergePR } from './githubTools.js'
 import { invokeBedrockLLM } from './bedrockClient.js'
 
 
@@ -22,33 +22,45 @@ app.post('/webhook', async (req, res) => {
     }
 
     const event = req.headers['x-github-event']
-    console.log('event: ', event)
     const payload = req.body
-    console.log('payload: ', payload)
 
     //  configure your workflow_run: to get details of that workflow
     if(event === "workflow_run" && payload.action === "completed") {
       const conclusion = payload.workflow_run?.conclusion // completed | failure | ...
-      const runEventName = payload.workflow_run?.name || payload.workflow_run?.workflow_id
+      // const runEventName = payload.workflow_run?.name || payload.workflow_run?.workflow_id
+      const runId = payload.workflow_run?.id
       const headSha = payload.workflow_run?.head_sha
       const repo = payload.repository?.full_name
       const branch = payload.workflow_run?.head_branch || 'default'
-      console.log(`Recieved workflow_run details:\n repo: ${repo},\n event: ${runEventName},\n status: ${conclusion}`)
+      console.log(`Recieved workflow_run details:\n repo: ${repo},\n event: ${runId},\n status: ${conclusion}`)
     
       // if status = 'failed' ?
       if(conclusion === 'failure') {
+        // fetch job logs
+        const jobs = await fetchJobs(repo, runId)
+        let logText = ""
+        for(const job of jobs) {
+          const jobLogs = await requestLogs(repo, job.id)
+          logText += `\nJob: ${job.name}\n Logs:\n ${jobLogs}\n`
+        }
+
         // call agent to fix
         const intent = `
           CI workflow failed. Details are: 
-          event ${runEventName} failed on commit ${headSha} for branch ${branch} in repo ${repo}.
+          Repo: ${repo}
+          Branch: ${branch}
+          Commit: ${headSha}
+          Workflow: ${payload.workflow_run?.name}
+          Logs: ${logText || 'No logs available.'}
 
-          Provide a short plan, suggest fix and candidate a code patch. Output JSON format with:
+          Provide a short plan, suggest fix and candidate a code patch. 
+          Output JSON format with:
           {
             "summary": "...",
             "patches": [
               {
-                "file_path": "relative/path",
-                "new_content": "file contents (full file)",
+                "file_path": "...",
+                "new_content": "...",
                 "commit_message": "..."
               }
             ],
@@ -56,13 +68,14 @@ app.post('/webhook', async (req, res) => {
             "pr_body": "..."
           } 
 
-          If you cannot produce a safe patch, respond with {"patches": []} only. Be conservative and minimal.
+          If you cannot produce a safe patch, respond with {"patches": []} only.
+          Be conservative and minimal.
         `
 
         const modelResponse = await invokeBedrockLLM(intent)
         console.log('modelResponse: ', modelResponse)
 
-        if(!Array.isArray(modelResponse.patches) || modelResponse.patches.length === 0) {
+        if(!modelResponse || !Array.isArray(modelResponse.patches)) {
           console.log("Model suggested no patches; stopping.");
           return res.status(200).json({ message: "No patches suggested" });
         }
