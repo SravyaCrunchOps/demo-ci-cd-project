@@ -31,8 +31,10 @@ export async function requestLogs(repoFullName, jobId) {
         repo,
         job_id: jobId,
     })
-    console.log('logs data: ', logs)
-    return logs.data
+    const lines = logs.data.split('\n')
+    const truncated_logs = lines.slice(-100).join("\n") 
+    console.log('logs data: ', truncated_logs)
+    return truncated_logs
 }
 
 
