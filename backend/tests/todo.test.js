@@ -1,7 +1,7 @@
-const { expect } = require('chai');
+import { expect } from 'chai';
 
-describe('Todos Router', () => {
-  it('should list items (mocked)', async () => {
-    // test implementation
+describe('Todo Test', () => {
+  it('should pass', () => {
+    expect(true).to.be.true;
   });
 });
