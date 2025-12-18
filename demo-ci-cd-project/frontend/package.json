@@ -1,0 +1,6 @@
+{
+  "name": "demo-ci-cd-project",
+  "version": "1.0.0",
+  "jest": "^29.4.3",
+  "// Other package."
+}
