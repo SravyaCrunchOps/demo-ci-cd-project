@@ -38,10 +38,13 @@ app.post('/webhook', async (req, res) => {
       if(conclusion === 'failure') {
         // fetch job logs
         const jobs = await fetchJobs(repo, runId)
+        console.log('jobs list: ', jobs)
         let logText = ""
         for(const job of jobs) {
-          const jobLogs = await requestLogs(repo, job.id)
-          logText += `\nJob: ${job.name}\n Logs:\n ${jobLogs}\n`
+          if (job.conclusion === 'failure') {
+            const jobLogs = await requestLogs(repo, job.id)
+            logText += `\nJob: ${job.name}\n Logs:\n ${jobLogs}\n`
+          }
         }
 
         // call agent to fix
